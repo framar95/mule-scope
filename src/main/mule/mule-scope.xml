@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="46ec5318-7cb1-4188-b761-35e8fe74f81b" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="36209685-fde7-416e-9a0b-a66b5d745e0b" >
+		<http:request-connection host="localhost" port="8081" />
+	</http:request-config>
+	<flow name="requestFlow" doc:id="aa1d299e-a290-4050-80b8-1c3ffdc038b4" >
+		<http:request method="GET" doc:name="GET/goodbye" doc:id="2de061dd-2d60-437d-b70b-65ffca90fded" config-ref="HTTP_Request_configuration" path="/goodbye" responseTimeout="300000" />
+	</flow>
+	<flow name="helloFlow" doc:id="4c80c5c0-babe-4fa4-842e-7403e5bb5a27" >
+		<http:listener doc:name="GET/hello" doc:id="487af4d0-b6dc-4ae5-904b-07314c3e3d45" path="/hello" allowedMethods="GET" config-ref="HTTP_Listener_config"/>
+		<set-variable value="42" doc:name="Set Variable" doc:id="1bcb62df-117c-4adb-8abe-7a0efe1ba07c" variableName="pippo"/>
+		<set-variable value="#[message.attributes.queryParams.cognome default 'CICCIO']" doc:name="Set Variable" doc:id="573d411c-4b0b-47fb-ab20-23143329d82e" variableName="cognome" />
+		<set-payload value="hello" doc:name="Set Payload" doc:id="f39493e4-1237-40c7-8ee8-49ae685ee0d5" />
+		<flow-ref doc:name="Flow Reference" doc:id="5b455688-be42-4d8b-bd38-f1fc16bccd59" name="requestFlow" />
+		<logger level="INFO" doc:name="Logger" doc:id="4290d3dd-1545-437c-86d9-badb65f93a8d" />
+	</flow>
+	<flow name="goodbyeFlow" doc:id="ea2846f3-65b0-4d3f-aa8a-4a5148313169" >
+		<http:listener doc:name="GET/goodbye" doc:id="dec19b3f-c56d-4721-a612-2c955bea0eb6" path="/goodbye" allowedMethods="GET" config-ref="HTTP_Listener_config"/>
+		<set-payload value="goodbye!" doc:name="Set Payload" doc:id="e39a3cf8-2bc4-4b02-9fe3-23027d8dc26e" />
+		<logger level="INFO" doc:name="Logger" doc:id="c6e335b2-c899-43a5-b020-8473eb27203e" />
+	</flow>
+</mule>
